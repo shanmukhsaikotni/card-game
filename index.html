@@ -974,24 +974,66 @@
         }
 
         function syncGameState(state) {
+            // Don't sync if it's currently my turn and I'm in the middle of playing
+            const currentPlayer = players[currentPlayerIndex];
+            const wasMyTurn = currentPlayer && currentPlayer.id === myPlayerId;
+            
+            // Update basic state
             players = state.players;
             housePot = state.housePot;
-            currentPlayerIndex = state.currentPlayerIndex;
+            const newPlayerIndex = state.currentPlayerIndex;
             
             if (state.deck) deck = state.deck;
             if (state.playerHands) playerHands = state.playerHands;
             if (state.drawnCard) drawnCard = state.drawnCard;
 
+            // If player turn changed, update for everyone
+            const turnChanged = currentPlayerIndex !== newPlayerIndex;
+            currentPlayerIndex = newPlayerIndex;
+
             updateHousePot();
             updateScoreboard();
             
-            // Hide previous turn elements
-            document.getElementById('nextButton').style.display = 'none';
-            document.getElementById('resultMessage').style.display = 'none';
-            document.getElementById('betInputContainer').style.display = 'none';
-            document.getElementById('guessButtons').style.display = 'none';
-            
-            showPlayerTurn();
+            // If turn changed, reset UI for everyone
+            if (turnChanged) {
+                document.getElementById('nextButton').style.display = 'none';
+                document.getElementById('resultMessage').style.display = 'none';
+                document.getElementById('betInputContainer').style.display = 'none';
+                document.getElementById('guessButtons').style.display = 'none';
+                showPlayerTurn();
+            } else {
+                // Same turn - update cards and result for spectators
+                const newPlayer = players[currentPlayerIndex];
+                const isNowMyTurn = newPlayer && newPlayer.id === myPlayerId;
+                
+                if (!isNowMyTurn && drawnCard) {
+                    // Show the drawn card and result for spectators
+                    const hand = playerHands[currentPlayerIndex];
+                    if (hand) {
+                        displayCards(hand, true);
+                    }
+                    
+                    // Show result if available
+                    if (state.lastResult && state.lastResult.playerIndex === currentPlayerIndex) {
+                        currentBet = state.lastResult.bet;
+                        const resultDiv = document.getElementById('resultMessage');
+                        resultDiv.style.display = 'block';
+                        resultDiv.className = 'result-message ' + state.lastResult.result;
+                        
+                        if (state.lastResult.result === 'correct') {
+                            resultDiv.textContent = `✓ ${newPlayer.name} wins $${currentBet}!`;
+                        } else {
+                            const drawnValue = drawnCard.numValue;
+                            const isMatch = (drawnValue === hand[0].numValue || drawnValue === hand[1].numValue);
+                            if (isMatch) {
+                                resultDiv.textContent = `✗ Card matches! ${newPlayer.name} loses $${currentBet}`;
+                            } else {
+                                resultDiv.textContent = `✗ Wrong guess! ${newPlayer.name} loses $${currentBet}`;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         function leaveLobby() {
@@ -1230,13 +1272,22 @@
             
             document.getElementById('nextButton').style.display = 'block';
 
-            // Update Firebase if online
+            // Update Firebase if online - save complete state so others can see result
             if (isOnlineMode && currentRoomCode) {
                 const gameStateRef = ref(database, `rooms/${currentRoomCode}/gameState`);
                 await update(gameStateRef, {
+                    currentPlayerIndex: currentPlayerIndex,
                     players: players,
                     housePot: housePot,
-                    drawnCard: drawnCard
+                    drawnCard: drawnCard,
+                    deck: deck,
+                    playerHands: playerHands,
+                    lastResult: {
+                        playerIndex: currentPlayerIndex,
+                        guess: guess,
+                        result: result,
+                        bet: currentBet
+                    }
                 });
             }
         }
