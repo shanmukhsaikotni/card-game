@@ -483,6 +483,7 @@
         let housePot = 0;
         let selectedAnte = 0;
         let currentBet = 0;
+        let betLocked = false;  // Prevent slider from changing bet after confirmation
 
         function selectAnte(amount) {
             selectedAnte = amount;
@@ -532,7 +533,7 @@
                 players.push({
                     name: `Player ${i}`,
                     score: 0,
-                    netWinnings: 0
+                    netWinnings: 0  // Start at 0 - ante is just entry fee
                 });
             }
 
@@ -585,6 +586,7 @@
             drawnCard = null;
             playerGuess = null;
             currentBet = 0;
+            betLocked = false;  // Unlock betting for new turn
         }
 
         function displayCards(cards, includeDrawn = false) {
@@ -638,6 +640,7 @@
         }
 
         function updateBetDisplay() {
+            if (betLocked) return;  // Don't change bet if it's locked
             const betSlider = document.getElementById('betSlider');
             currentBet = parseInt(betSlider.value);
             document.getElementById('betAmountDisplay').textContent = `$${currentBet}`;
@@ -653,6 +656,7 @@
         }
 
         function confirmBet() {
+            betLocked = true;  // Lock the bet so slider can't change it
             document.getElementById('betInputContainer').style.display = 'none';
             document.getElementById('guessButtons').style.display = 'flex';
         }
