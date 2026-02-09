@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anakapalli Lona Bhayata</title>
+    <title>Anakapalli Lona Bhayata - Online</title>
     <style>
         * {
             margin: 0;
@@ -101,6 +101,16 @@
             line-height: 1.2;
         }
 
+        .mode-badge {
+            background: #4caf50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.5em;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
         .setup-screen, .game-screen {
             display: none;
         }
@@ -120,7 +130,7 @@
             color: #333;
         }
 
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             width: 100%;
             padding: 12px;
             font-size: 1.1em;
@@ -383,6 +393,92 @@
             text-align: center;
             color: #1e3c72;
         }
+
+        .lobby-area {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .player-list {
+            margin: 15px 0;
+        }
+
+        .player-item {
+            padding: 10px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .countdown {
+            font-size: 1.2em;
+            color: #f57f17;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .game-code {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px dashed #2a5298;
+        }
+
+        .game-code-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2a5298;
+            letter-spacing: 3px;
+            margin: 10px 0;
+        }
+
+        .copy-btn {
+            background: #4caf50;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            width: auto;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+
+        .mode-selection {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mode-btn {
+            padding: 20px 40px;
+            margin: 10px;
+            font-size: 1.2em;
+        }
+
+        .mode-btn.online {
+            background: #4caf50;
+        }
+
+        .mode-btn.online:hover {
+            background: #388e3c;
+        }
+
+        .back-btn {
+            background: #666;
+            width: auto;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+
+        .waiting-indicator {
+            text-align: center;
+            padding: 20px;
+            color: #f57f17;
+        }
     </style>
 </head>
 <body>
@@ -393,15 +489,31 @@
                 <div class="logo-card black">K♠</div>
                 <div class="logo-card red">Q♦</div>
             </div>
-            <span class="game-title">Anakapalli Lona Bhayata</span>
+            <span class="game-title">Anakapalli Lona Bhayata<span class="mode-badge" id="modeBadge" style="display: none;">ONLINE</span></span>
         </h1>
 
-        <!-- Setup Screen -->
-        <div class="setup-screen active">
+        <!-- Mode Selection -->
+        <div class="setup-screen active" id="modeSelection">
+            <div class="mode-selection">
+                <h2 style="color: #2a5298; margin-bottom: 30px;">Choose Game Mode</h2>
+                <button class="mode-btn" onclick="showLocalSetup()">
+                    📱 Local Game<br>
+                    <span style="font-size: 0.8em;">(Pass & Play)</span>
+                </button>
+                <button class="mode-btn online" onclick="showOnlineSetup()">
+                    🌐 Online Multiplayer<br>
+                    <span style="font-size: 0.8em;">(Play with Friends Online)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Local Setup -->
+        <div class="setup-screen" id="localSetup">
+            <button class="back-btn" onclick="backToModeSelection()">← Back</button>
             <div class="player-setup">
-                <h2 style="text-align: center; color: #2a5298; margin-bottom: 20px;">Game Setup</h2>
+                <h2 style="text-align: center; color: #2a5298; margin-bottom: 20px;">Local Game Setup</h2>
                 <p class="info-text">
-                    🎮 Pass & Play: Perfect for playing with friends!<br>
+                    🎮 Pass & Play: Perfect for playing together!<br>
                     Pass the device around for each player's turn.
                 </p>
                 <label for="playerCount">How many players?</label>
@@ -409,14 +521,74 @@
                 
                 <label>Select Ante (buy-in per player):</label>
                 <div class="bet-options">
-                    <div class="bet-option" onclick="selectAnte(2)">$2</div>
-                    <div class="bet-option" onclick="selectAnte(5)">$5</div>
-                    <div class="bet-option" onclick="selectAnte(10)">$10</div>
-                    <div class="bet-option" onclick="selectAnte(20)">$20</div>
+                    <div class="bet-option" onclick="selectAnteLocal(2)">$2</div>
+                    <div class="bet-option" onclick="selectAnteLocal(5)">$5</div>
+                    <div class="bet-option" onclick="selectAnteLocal(10)">$10</div>
+                    <div class="bet-option" onclick="selectAnteLocal(20)">$20</div>
                 </div>
-                <div id="anteError" style="color: #c62828; margin: 10px 0; display: none;">Please select an ante amount</div>
+                <div id="anteErrorLocal" style="color: #c62828; margin: 10px 0; display: none;">Please select an ante amount</div>
             </div>
-            <button onclick="startGame()">Start Game</button>
+            <button onclick="startLocalGame()">Start Game</button>
+        </div>
+
+        <!-- Online Setup -->
+        <div class="setup-screen" id="onlineSetup">
+            <button class="back-btn" onclick="backToModeSelection()">← Back</button>
+            <div class="player-setup">
+                <h2 style="text-align: center; color: #2a5298; margin-bottom: 20px;">Online Multiplayer</h2>
+                <p class="info-text">
+                    🌐 Each player joins from their own device!<br>
+                    Create a room or join with a code.
+                </p>
+                
+                <div style="display: flex; gap: 10px; margin: 20px 0;">
+                    <button onclick="createRoom()" style="background: #4caf50;">Create New Room</button>
+                    <button onclick="showJoinRoom()">Join Existing Room</button>
+                </div>
+
+                <div id="joinRoomForm" style="display: none;">
+                    <label for="roomCode">Enter Room Code:</label>
+                    <input type="text" id="roomCode" placeholder="e.g. ABC123" maxlength="6" style="text-transform: uppercase;">
+                    <button onclick="joinRoom()">Join Room</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lobby Screen -->
+        <div class="setup-screen" id="lobbyScreen">
+            <div class="game-code">
+                <div>Room Code:</div>
+                <div class="game-code-value" id="roomCodeDisplay">------</div>
+                <div>
+                    <button class="copy-btn" onclick="copyRoomCode()">📋 Copy Code</button>
+                    <button class="copy-btn" onclick="shareRoom()">🔗 Share Link</button>
+                </div>
+            </div>
+
+            <div class="player-setup">
+                <label for="playerName">Your Name:</label>
+                <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+                
+                <label>Select Ante (buy-in per player):</label>
+                <div class="bet-options">
+                    <div class="bet-option" onclick="selectAnteOnline(2)">$2</div>
+                    <div class="bet-option" onclick="selectAnteOnline(5)">$5</div>
+                    <div class="bet-option" onclick="selectAnteOnline(10)">$10</div>
+                    <div class="bet-option" onclick="selectAnteOnline(20)">$20</div>
+                </div>
+                <div id="anteErrorOnline" style="color: #c62828; margin: 10px 0; display: none;">Please select an ante amount</div>
+                
+                <button onclick="joinLobby()" id="joinLobbyBtn">Join Lobby</button>
+            </div>
+
+            <div class="lobby-area" id="lobbyArea" style="display: none;">
+                <h3 style="color: #1e3c72; margin-bottom: 15px;">👥 Players in Lobby:</h3>
+                <div class="player-list" id="playersList"></div>
+                <div class="countdown" id="countdown"></div>
+                <button onclick="startOnlineGame()" id="startGameBtn" style="display: none; background: #4caf50;">Start Game Now</button>
+            </div>
+
+            <button class="new-game-btn" onclick="leaveLobby()">Leave Lobby</button>
         </div>
 
         <!-- Game Screen -->
@@ -430,6 +602,10 @@
             
             <div class="current-player" id="currentPlayer"></div>
             
+            <div class="waiting-indicator" id="waitingIndicator" style="display: none;">
+                ⏳ Waiting for your turn...
+            </div>
+
             <div class="cards-container" id="cardsContainer"></div>
             
             <div class="bet-input-container" id="betInputContainer" style="display: none;">
@@ -469,7 +645,43 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Simple online multiplayer using Firebase
+        // Note: You'll need to set up your own Firebase project and replace the config below
+        
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, get, onValue, push, remove, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase configuration - REPLACE THIS WITH YOUR OWN
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVJ7uJJOoakUQg4qT4qK1SxTifVN3KvnI",  // REPLACE
+            authDomain: "anakapalli-card-game.firebaseapp.com",  // REPLACE
+            databaseURL: "https://your-project.firebaseio.com",  // REPLACE
+            projectId: "your-project",  // REPLACE
+            storageBucket: "your-project.appspot.com",  // REPLACE
+            messagingSenderId: "123456789",  // REPLACE
+            appId: "1:123456789:web:example"  // REPLACE
+        };
+
+        // Initialize Firebase
+        let app, database;
+        let isFirebaseEnabled = false;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            database = getDatabase(app);
+            isFirebaseEnabled = true;
+            console.log('Firebase initialized');
+        } catch (error) {
+            console.error('Firebase initialization failed:', error);
+            isFirebaseEnabled = false;
+        }
+
+        // Make database available globally
+        window.firebaseDB = database;
+        window.firebaseEnabled = isFirebaseEnabled;
+
+        // Game variables
         const suits = ['♠', '♥', '♦', '♣'];
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         const valueMap = {'A': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13};
@@ -483,15 +695,324 @@
         let housePot = 0;
         let selectedAnte = 0;
         let currentBet = 0;
-        let betLocked = false;  // Prevent slider from changing bet after confirmation
+        let betLocked = false;
 
-        function selectAnte(amount) {
-            selectedAnte = amount;
-            document.querySelectorAll('.bet-option').forEach(option => {
+        // Online multiplayer variables
+        let isOnlineMode = false;
+        let currentRoomCode = null;
+        let myPlayerId = 'player_' + Math.random().toString(36).substr(2, 9);
+        let myPlayerName = '';
+        let roomRef = null;
+        let gameStateListener = null;
+
+        // Expose functions globally
+        window.showLocalSetup = showLocalSetup;
+        window.showOnlineSetup = showOnlineSetup;
+        window.backToModeSelection = backToModeSelection;
+        window.selectAnteLocal = selectAnteLocal;
+        window.selectAnteOnline = selectAnteOnline;
+        window.startLocalGame = startLocalGame;
+        window.createRoom = createRoom;
+        window.showJoinRoom = showJoinRoom;
+        window.joinRoom = joinRoom;
+        window.copyRoomCode = copyRoomCode;
+        window.shareRoom = shareRoom;
+        window.joinLobby = joinLobby;
+        window.startOnlineGame = startOnlineGame;
+        window.leaveLobby = leaveLobby;
+        window.showBetting = showBetting;
+        window.updateBetDisplay = updateBetDisplay;
+        window.setQuickBet = setQuickBet;
+        window.confirmBet = confirmBet;
+        window.makeGuess = makeGuess;
+        window.nextPlayer = nextPlayer;
+        window.resetGame = resetGame;
+
+        function showLocalSetup() {
+            hideAllScreens();
+            document.getElementById('localSetup').classList.add('active');
+            isOnlineMode = false;
+        }
+
+        function showOnlineSetup() {
+            if (!isFirebaseEnabled) {
+                alert('Online multiplayer requires Firebase setup.\n\nPlease follow the instructions in the code to set up Firebase, or use Local Game mode.');
+                return;
+            }
+            hideAllScreens();
+            document.getElementById('onlineSetup').classList.add('active');
+            document.getElementById('modeBadge').style.display = 'inline-block';
+            isOnlineMode = true;
+        }
+
+        function backToModeSelection() {
+            hideAllScreens();
+            document.getElementById('modeSelection').classList.add('active');
+            document.getElementById('modeBadge').style.display = 'none';
+            isOnlineMode = false;
+        }
+
+        function hideAllScreens() {
+            document.querySelectorAll('.setup-screen, .game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+
+        // Generate random room code
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing chars
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        async function createRoom() {
+            if (!isFirebaseEnabled) {
+                alert('Firebase not configured. Please set up Firebase first.');
+                return;
+            }
+
+            const roomCode = generateRoomCode();
+            currentRoomCode = roomCode;
+
+            // Create room in database
+            const roomRef = ref(database, `rooms/${roomCode}`);
+            await set(roomRef, {
+                code: roomCode,
+                status: 'lobby',
+                created: Date.now(),
+                host: myPlayerId,
+                players: {}
+            });
+
+            showLobby(roomCode);
+        }
+
+        function showJoinRoom() {
+            document.getElementById('joinRoomForm').style.display = 'block';
+        }
+
+        async function joinRoom() {
+            const roomCode = document.getElementById('roomCode').value.toUpperCase().trim();
+            if (!roomCode || roomCode.length !== 6) {
+                alert('Please enter a valid 6-character room code');
+                return;
+            }
+
+            // Check if room exists
+            const roomRef = ref(database, `rooms/${roomCode}`);
+            const snapshot = await get(roomRef);
+
+            if (!snapshot.exists()) {
+                alert('Room not found. Please check the code and try again.');
+                return;
+            }
+
+            const roomData = snapshot.val();
+            if (roomData.status !== 'lobby') {
+                alert('This game is already in progress. Please try another room.');
+                return;
+            }
+
+            currentRoomCode = roomCode;
+            showLobby(roomCode);
+        }
+
+        function showLobby(roomCode) {
+            hideAllScreens();
+            document.getElementById('lobbyScreen').classList.add('active');
+            document.getElementById('roomCodeDisplay').textContent = roomCode;
+        }
+
+        function copyRoomCode() {
+            const code = document.getElementById('roomCodeDisplay').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Room code copied! Share it with your friends.');
+            });
+        }
+
+        function shareRoom() {
+            const code = document.getElementById('roomCodeDisplay').textContent;
+            const url = window.location.href + '?room=' + code;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Room link copied! Share it with your friends.');
+            });
+        }
+
+        async function joinLobby() {
+            const playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            if (selectedAnte === 0) {
+                document.getElementById('anteErrorOnline').style.display = 'block';
+                return;
+            }
+
+            myPlayerName = playerName;
+
+            // Add player to room
+            const playerRef = ref(database, `rooms/${currentRoomCode}/players/${myPlayerId}`);
+            await set(playerRef, {
+                id: myPlayerId,
+                name: playerName,
+                ante: selectedAnte,
+                joinedAt: Date.now()
+            });
+
+            // Hide join form, show lobby
+            document.getElementById('playerName').disabled = true;
+            document.getElementById('joinLobbyBtn').style.display = 'none';
+            document.getElementById('lobbyArea').style.display = 'block';
+
+            // Listen for players updates
+            const playersRef = ref(database, `rooms/${currentRoomCode}/players`);
+            onValue(playersRef, (snapshot) => {
+                updateLobbyDisplay(snapshot.val());
+            });
+
+            // Listen for game start
+            const roomRef = ref(database, `rooms/${currentRoomCode}`);
+            onValue(roomRef, (snapshot) => {
+                const room = snapshot.val();
+                if (room && room.status === 'playing') {
+                    startGameFromLobby(room);
+                }
+            });
+        }
+
+        function updateLobbyDisplay(playersData) {
+            const playersList = document.getElementById('playersList');
+            if (!playersData) return;
+
+            const players = Object.values(playersData);
+            playersList.innerHTML = players.map(p => `
+                <div class="player-item">
+                    <strong>${p.name}</strong>
+                    <span>$${p.ante} ${p.id === myPlayerId ? '(You)' : ''}</span>
+                </div>
+            `).join('');
+
+            // Show start button for host
+            const roomRef = ref(database, `rooms/${currentRoomCode}`);
+            get(roomRef).then((snapshot) => {
+                const room = snapshot.val();
+                if (room && room.host === myPlayerId && players.length >= 2) {
+                    document.getElementById('startGameBtn').style.display = 'block';
+                }
+            });
+
+            document.getElementById('countdown').textContent = 
+                players.length < 2 ? 'Waiting for more players...' : 'Ready to start!';
+        }
+
+        async function startOnlineGame() {
+            // Update room status
+            const roomRef = ref(database, `rooms/${currentRoomCode}`);
+            const snapshot = await get(roomRef);
+            const room = snapshot.val();
+            const playersData = room.players;
+
+            // Initialize game state
+            players = Object.values(playersData).map(p => ({
+                id: p.id,
+                name: p.name,
+                score: 0,
+                netWinnings: 0
+            }));
+
+            housePot = players.reduce((sum, p) => {
+                const playerData = playersData[p.id];
+                return sum + playerData.ante;
+            }, 0);
+
+            selectedAnte = Object.values(playersData)[0].ante;
+
+            createDeck();
+            dealInitialCards();
+
+            // Save game state to Firebase
+            await update(roomRef, {
+                status: 'playing',
+                gameState: {
+                    players: players,
+                    housePot: housePot,
+                    currentPlayerIndex: 0,
+                    deck: deck,
+                    playerHands: playerHands
+                }
+            });
+        }
+
+        function startGameFromLobby(room) {
+            // Load game state
+            const gameState = room.gameState;
+            players = gameState.players;
+            housePot = gameState.housePot;
+            currentPlayerIndex = gameState.currentPlayerIndex;
+            deck = gameState.deck;
+            playerHands = gameState.playerHands;
+
+            hideAllScreens();
+            document.querySelector('.game-screen').classList.add('active');
+
+            updateHousePot();
+            updateScoreboard();
+            showPlayerTurn();
+
+            // Listen for game state changes
+            const gameStateRef = ref(database, `rooms/${currentRoomCode}/gameState`);
+            gameStateListener = onValue(gameStateRef, (snapshot) => {
+                const state = snapshot.val();
+                if (state) {
+                    syncGameState(state);
+                }
+            });
+        }
+
+        function syncGameState(state) {
+            players = state.players;
+            housePot = state.housePot;
+            currentPlayerIndex = state.currentPlayerIndex;
+            
+            if (state.deck) deck = state.deck;
+            if (state.playerHands) playerHands = state.playerHands;
+            if (state.drawnCard) drawnCard = state.drawnCard;
+
+            updateHousePot();
+            updateScoreboard();
+            showPlayerTurn();
+        }
+
+        function leaveLobby() {
+            if (currentRoomCode && myPlayerId) {
+                const playerRef = ref(database, `rooms/${currentRoomCode}/players/${myPlayerId}`);
+                remove(playerRef);
+            }
+            backToModeSelection();
+        }
+
+        // Local game functions
+        let selectedAnteLocal = 0;
+        function selectAnteLocal(amount) {
+            selectedAnteLocal = amount;
+            document.querySelectorAll('#localSetup .bet-option').forEach(option => {
                 option.classList.remove('selected');
             });
             event.target.classList.add('selected');
-            document.getElementById('anteError').style.display = 'none';
+            document.getElementById('anteErrorLocal').style.display = 'none';
+        }
+
+        function selectAnteOnline(amount) {
+            selectedAnte = amount;
+            document.querySelectorAll('#lobbyScreen .bet-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            document.getElementById('anteErrorOnline').style.display = 'none';
         }
 
         function createDeck() {
@@ -516,34 +1037,35 @@
             }
         }
 
-        function startGame() {
+        function startLocalGame() {
             const playerCount = parseInt(document.getElementById('playerCount').value);
             if (playerCount < 2 || playerCount > 8) {
                 alert('Please enter 2-8 players');
                 return;
             }
-
-            if (selectedAnte === 0) {
-                document.getElementById('anteError').style.display = 'block';
+            if (selectedAnteLocal === 0) {
+                document.getElementById('anteErrorLocal').style.display = 'block';
                 return;
             }
 
             players = [];
             for (let i = 1; i <= playerCount; i++) {
                 players.push({
+                    id: 'local_' + i,
                     name: `Player ${i}`,
                     score: 0,
-                    netWinnings: 0  // Start at 0 - ante is just entry fee
+                    netWinnings: 0
                 });
             }
 
-            housePot = playerCount * selectedAnte;
+            housePot = playerCount * selectedAnteLocal;
+            selectedAnte = selectedAnteLocal;
             updateHousePot();
 
             createDeck();
             dealInitialCards();
 
-            document.querySelector('.setup-screen').classList.remove('active');
+            hideAllScreens();
             document.querySelector('.game-screen').classList.add('active');
 
             updateScoreboard();
@@ -568,16 +1090,26 @@
                 document.getElementById('drawButton').style.display = 'none';
                 document.getElementById('currentPlayer').style.display = 'none';
                 document.getElementById('cardsContainer').innerHTML = '';
+                document.getElementById('waitingIndicator').style.display = 'none';
                 return;
             }
 
             const player = players[currentPlayerIndex];
-            document.getElementById('currentPlayer').textContent = `${player.name}'s Turn`;
+            const isMyTurn = !isOnlineMode || player.id === myPlayerId;
+
+            if (isOnlineMode) {
+                document.getElementById('currentPlayer').textContent = `${player.name}'s Turn ${isMyTurn ? '(YOUR TURN!)' : ''}`;
+                document.getElementById('currentPlayer').style.color = isMyTurn ? '#4caf50' : '#f57f17';
+                document.getElementById('waitingIndicator').style.display = isMyTurn ? 'none' : 'block';
+            } else {
+                document.getElementById('currentPlayer').textContent = `${player.name}'s Turn`;
+                document.getElementById('waitingIndicator').style.display = 'none';
+            }
             
             const hand = playerHands[currentPlayerIndex];
             displayCards(hand);
             
-            document.getElementById('drawButton').style.display = 'block';
+            document.getElementById('drawButton').style.display = isMyTurn ? 'block' : 'none';
             document.getElementById('betInputContainer').style.display = 'none';
             document.getElementById('guessButtons').style.display = 'none';
             document.getElementById('resultMessage').style.display = 'none';
@@ -586,7 +1118,7 @@
             drawnCard = null;
             playerGuess = null;
             currentBet = 0;
-            betLocked = false;  // Unlock betting for new turn
+            betLocked = false;
         }
 
         function displayCards(cards, includeDrawn = false) {
@@ -621,6 +1153,11 @@
         }
 
         function showBetting() {
+            const player = players[currentPlayerIndex];
+            if (isOnlineMode && player.id !== myPlayerId) {
+                return; // Not my turn
+            }
+
             document.getElementById('drawButton').style.display = 'none';
             document.getElementById('betInputContainer').style.display = 'block';
             
@@ -640,13 +1177,14 @@
         }
 
         function updateBetDisplay() {
-            if (betLocked) return;  // Don't change bet if it's locked
+            if (betLocked) return;
             const betSlider = document.getElementById('betSlider');
             currentBet = parseInt(betSlider.value);
             document.getElementById('betAmountDisplay').textContent = `$${currentBet}`;
         }
 
         function setQuickBet(percentage) {
+            if (betLocked) return;
             const betSlider = document.getElementById('betSlider');
             const minBet = parseInt(betSlider.min);
             const maxBet = parseInt(betSlider.max);
@@ -656,12 +1194,17 @@
         }
 
         function confirmBet() {
-            betLocked = true;  // Lock the bet so slider can't change it
+            betLocked = true;
             document.getElementById('betInputContainer').style.display = 'none';
             document.getElementById('guessButtons').style.display = 'flex';
         }
 
-        function makeGuess(guess) {
+        async function makeGuess(guess) {
+            const player = players[currentPlayerIndex];
+            if (isOnlineMode && player.id !== myPlayerId) {
+                return; // Not my turn
+            }
+
             playerGuess = guess;
             
             if (deck.length === 0) {
@@ -679,6 +1222,16 @@
             showResult(result);
             
             document.getElementById('nextButton').style.display = 'block';
+
+            // Update Firebase if online
+            if (isOnlineMode && currentRoomCode) {
+                const gameStateRef = ref(database, `rooms/${currentRoomCode}/gameState`);
+                await update(gameStateRef, {
+                    players: players,
+                    housePot: housePot,
+                    drawnCard: drawnCard
+                });
+            }
         }
 
         function checkGuess(hand, drawn, guess) {
@@ -722,7 +1275,7 @@
             updateScoreboard();
         }
 
-        function nextPlayer() {
+        async function nextPlayer() {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
             
             if (deck.length < 2) {
@@ -730,6 +1283,17 @@
             }
             playerHands[currentPlayerIndex] = [deck.pop(), deck.pop()];
             playerHands[currentPlayerIndex].sort((a, b) => a.numValue - b.numValue);
+            
+            // Update Firebase if online
+            if (isOnlineMode && currentRoomCode) {
+                const gameStateRef = ref(database, `rooms/${currentRoomCode}/gameState`);
+                await update(gameStateRef, {
+                    currentPlayerIndex: currentPlayerIndex,
+                    deck: deck,
+                    playerHands: playerHands,
+                    drawnCard: null
+                });
+            }
             
             showPlayerTurn();
         }
@@ -751,9 +1315,32 @@
             });
         }
 
-        function resetGame() {
+        async function resetGame() {
+            // Clean up online game
+            if (isOnlineMode && currentRoomCode) {
+                if (gameStateListener) {
+                    // Unsubscribe from listeners
+                    gameStateListener();
+                }
+                // Remove room
+                const roomRef = ref(database, `rooms/${currentRoomCode}`);
+                await remove(roomRef);
+                currentRoomCode = null;
+            }
+            
             location.reload();
         }
+
+        // Check for room code in URL
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomCode = urlParams.get('room');
+            if (roomCode && isFirebaseEnabled) {
+                document.getElementById('roomCode').value = roomCode;
+                showOnlineSetup();
+                setTimeout(() => joinRoom(), 500);
+            }
+        });
     </script>
 </body>
 </html>
