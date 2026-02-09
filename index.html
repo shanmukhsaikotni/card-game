@@ -652,15 +652,15 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, set, get, onValue, push, remove, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        // Firebase configuration - REPLACE THIS WITH YOUR OWN
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyAVJ7uJJOoakUQg4qT4qK1SxTifVN3KvnI",  // REPLACE
-            authDomain: "anakapalli-card-game.firebaseapp.com",  // REPLACE
-            databaseURL: "https://your-project.firebaseio.com",  // REPLACE
-            projectId: "your-project",  // REPLACE
-            storageBucket: "your-project.appspot.com",  // REPLACE
-            messagingSenderId: "123456789",  // REPLACE
-            appId: "1:123456789:web:example"  // REPLACE
+            apiKey: "AIzaSyAVJ7uJJOoakUQg4qT4qK1SxTifVN3KvnI",
+            authDomain: "anakapalli-card-game.firebaseapp.com",
+            databaseURL: "https://anakapalli-card-game-default-rtdb.firebaseio.com",
+            projectId: "anakapalli-card-game",
+            storageBucket: "anakapalli-card-game.firebasestorage.app",
+            messagingSenderId: "672935697255",
+            appId: "1:672935697255:web:dfacec77e24410284badc2"
         };
 
         // Initialize Firebase
@@ -1240,8 +1240,9 @@
             const max = card2.numValue;
             const drawnValue = drawn.numValue;
 
+            // If card matches either hand card, player LOSES (not in or out)
             if (drawnValue === min || drawnValue === max) {
-                return 'tie';
+                return 'incorrect';
             }
 
             const isBetween = drawnValue > min && drawnValue < max;
@@ -1263,12 +1264,20 @@
                 players[currentPlayerIndex].score++;
                 players[currentPlayerIndex].netWinnings += currentBet;
                 housePot -= currentBet;
-            } else if (result === 'incorrect') {
-                resultDiv.textContent = `✗ Wrong! You lose $${currentBet} to the house.`;
+            } else {
+                // Incorrect includes both wrong guess AND matching cards
+                const drawnValue = drawnCard.numValue;
+                const hand = playerHands[currentPlayerIndex];
+                const isMatch = (drawnValue === hand[0].numValue || drawnValue === hand[1].numValue);
+                
+                if (isMatch) {
+                    resultDiv.textContent = `✗ Card matches your hand! You lose $${currentBet} to the house.`;
+                } else {
+                    resultDiv.textContent = `✗ Wrong guess! You lose $${currentBet} to the house.`;
+                }
+                
                 players[currentPlayerIndex].netWinnings -= currentBet;
                 housePot += currentBet;
-            } else {
-                resultDiv.textContent = `⚠ Card matches! Push - bet returned.`;
             }
 
             updateHousePot();
