@@ -984,6 +984,13 @@
 
             updateHousePot();
             updateScoreboard();
+            
+            // Hide previous turn elements
+            document.getElementById('nextButton').style.display = 'none';
+            document.getElementById('resultMessage').style.display = 'none';
+            document.getElementById('betInputContainer').style.display = 'none';
+            document.getElementById('guessButtons').style.display = 'none';
+            
             showPlayerTurn();
         }
 
@@ -1285,6 +1292,12 @@
         }
 
         async function nextPlayer() {
+            // Only the player who finished their turn should advance
+            const player = players[currentPlayerIndex];
+            if (isOnlineMode && player.id !== myPlayerId) {
+                return; // Not my turn to advance
+            }
+
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
             
             if (deck.length < 2) {
@@ -1300,6 +1313,8 @@
                     currentPlayerIndex: currentPlayerIndex,
                     deck: deck,
                     playerHands: playerHands,
+                    players: players,
+                    housePot: housePot,
                     drawnCard: null
                 });
             }
