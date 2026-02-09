@@ -704,6 +704,7 @@
         let myPlayerName = '';
         let roomRef = null;
         let gameStateListener = null;
+        let turnAdvanceTimeout = null;
 
         // Expose functions globally
         window.showLocalSetup = showLocalSetup;
@@ -1270,8 +1271,6 @@
             const result = checkGuess(hand, drawnCard, guess);
             showResult(result);
             
-            document.getElementById('nextButton').style.display = 'block';
-
             // Update Firebase if online - save complete state so others can see result
             if (isOnlineMode && currentRoomCode) {
                 const gameStateRef = ref(database, `rooms/${currentRoomCode}/gameState`);
@@ -1289,6 +1288,20 @@
                         bet: currentBet
                     }
                 });
+                
+                // Clear any existing timeout
+                if (turnAdvanceTimeout) {
+                    clearTimeout(turnAdvanceTimeout);
+                }
+                
+                // Auto-advance to next player after 3 seconds
+                turnAdvanceTimeout = setTimeout(() => {
+                    nextPlayer();
+                    turnAdvanceTimeout = null;
+                }, 3000);
+            } else {
+                // Local mode - show next button
+                document.getElementById('nextButton').style.display = 'block';
             }
         }
 
