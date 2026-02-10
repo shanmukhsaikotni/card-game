@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anakapalli Lona Bhayata - Enhanced</title>
+    <title>Mukka Yethu Be - Online Card Game</title>
     <style>
         * {
             margin: 0;
@@ -13,9 +13,26 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            background: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.05) 10px, rgba(255,255,255,.05) 20px),
+                linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 25%, #c44569 50%, #556270 75%, #4ecdc4 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .game-container {
@@ -26,10 +43,37 @@
 
         h1 {
             text-align: center;
-            color: white;
+            color: #fff;
             margin: 20px 0;
             font-size: 2.5em;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 
+                0 0 10px #ff6b6b,
+                0 0 20px #ff6b6b,
+                0 0 30px #ff6b6b,
+                0 0 40px #c44569,
+                2px 2px 0px #4ecdc4;
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: neonPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from {
+                text-shadow: 
+                    0 0 10px #ff6b6b,
+                    0 0 20px #ff6b6b,
+                    0 0 30px #ff6b6b,
+                    0 0 40px #c44569,
+                    2px 2px 0px #4ecdc4;
+            }
+            to {
+                text-shadow: 
+                    0 0 20px #ff6b6b,
+                    0 0 30px #ff6b6b,
+                    0 0 40px #ff6b6b,
+                    0 0 50px #c44569,
+                    3px 3px 0px #4ecdc4;
+            }
         }
 
         .logo {
@@ -40,15 +84,18 @@
         .logo-card {
             width: 40px;
             height: 55px;
-            background: white;
-            border: 2px solid #333;
-            border-radius: 6px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 3px solid #333;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5em;
             font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 4px 0px #222,
+                0 6px 8px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.5);
             animation: cardWiggle 2s infinite;
         }
 
@@ -86,38 +133,87 @@
         }
 
         .setup-box {
-            background: white;
-            border-radius: 15px;
+            background: linear-gradient(145deg, #f5f5f5, #ffffff);
+            border-radius: 8px;
             padding: 30px;
             max-width: 600px;
             margin: 20px auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 0 0 4px #333,
+                0 0 0 8px #4ecdc4,
+                0 10px 40px rgba(0,0,0,0.4);
+            border: 4px solid #333;
+            position: relative;
+        }
+
+        .setup-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            border-radius: 8px;
         }
 
         .mode-btn {
-            background: #2a5298;
+            background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
             color: white;
-            border: none;
+            border: 4px solid #333;
             padding: 20px;
             font-size: 1.1em;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
             margin: 10px 0;
-            transition: all 0.3s;
+            transition: all 0.1s;
+            box-shadow: 
+                0 6px 0 #c44569,
+                0 8px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            position: relative;
         }
 
         .mode-btn:hover {
-            background: #1e3c72;
             transform: translateY(-2px);
+            box-shadow: 
+                0 8px 0 #c44569,
+                0 10px 15px rgba(0,0,0,0.4);
+        }
+
+        .mode-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 2px 0 #c44569,
+                0 3px 5px rgba(0,0,0,0.3);
         }
 
         .mode-btn.online {
-            background: #4caf50;
+            background: linear-gradient(145deg, #4ecdc4, #44a3a0);
+            box-shadow: 
+                0 6px 0 #36857f,
+                0 8px 10px rgba(0,0,0,0.3);
         }
 
         .mode-btn.online:hover {
-            background: #388e3c;
+            box-shadow: 
+                0 8px 0 #36857f,
+                0 10px 15px rgba(0,0,0,0.4);
+        }
+
+        .mode-btn.online:active {
+            box-shadow: 
+                0 2px 0 #36857f,
+                0 3px 5px rgba(0,0,0,0.3);
         }
 
         /* Avatar Selection */
@@ -184,8 +280,16 @@
         }
 
         .poker-table {
-            background: #0a5f0a;
-            border: 15px solid #8b4513;
+            background: 
+                radial-gradient(ellipse at center, #2d5016 0%, #1a3a0f 100%);
+            border: 15px solid;
+            border-image: repeating-linear-gradient(
+                45deg,
+                #8b4513,
+                #8b4513 10px,
+                #a0522d 10px,
+                #a0522d 20px
+            ) 15;
             border-radius: 50%;
             width: 800px;
             height: 500px;
@@ -193,7 +297,21 @@
             position: relative;
             box-shadow: 
                 inset 0 0 50px rgba(0,0,0,0.5),
+                0 0 0 4px #333,
+                0 0 20px #ff6b6b,
                 0 10px 50px rgba(0,0,0,0.5);
+        }
+
+        .poker-table::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 80%;
+            border: 3px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
         }
 
         .table-center {
@@ -206,23 +324,50 @@
         }
 
         .house-pot-display {
-            background: rgba(255, 215, 0, 0.9);
+            background: linear-gradient(145deg, #ffd700, #ffed4e);
             color: #333;
             padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1.5em;
             font-weight: bold;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            box-shadow: 
+                0 4px 0 #d4af37,
+                0 6px 15px rgba(0,0,0,0.5),
+                inset 0 -2px 0 rgba(0,0,0,0.2);
             margin-bottom: 20px;
+            border: 4px solid #333;
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.5);
+            animation: coinShine 3s infinite;
+        }
+
+        @keyframes coinShine {
+            0%, 100% {
+                box-shadow: 
+                    0 4px 0 #d4af37,
+                    0 6px 15px rgba(0,0,0,0.5),
+                    inset 0 -2px 0 rgba(0,0,0,0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 4px 0 #d4af37,
+                    0 6px 15px rgba(0,0,0,0.5),
+                    inset 0 -2px 0 rgba(0,0,0,0.2),
+                    0 0 20px rgba(255, 215, 0, 0.6);
+            }
         }
 
         .round-display {
-            background: rgba(255, 255, 255, 0.9);
-            color: #2a5298;
+            background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
+            color: white;
             padding: 10px 20px;
             border-radius: 8px;
             font-size: 1.2em;
             font-weight: bold;
+            border: 4px solid #333;
+            box-shadow: 
+                0 4px 0 #c44569,
+                0 6px 10px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
         /* Player Positions */
@@ -246,20 +391,45 @@
             height: 80px;
             border-radius: 50%;
             border: 4px solid #ffd700;
-            background: #e3f2fd;
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5em;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: 
+                0 0 0 4px #333,
+                0 5px 15px rgba(0,0,0,0.5);
             transition: all 0.3s;
         }
 
         .player-avatar.active {
-            border-color: #4caf50;
-            box-shadow: 0 0 20px #4caf50;
-            animation: pulse 1s infinite;
+            border-color: #4ecdc4;
+            box-shadow: 
+                0 0 0 4px #333,
+                0 0 20px #4ecdc4,
+                0 0 30px #4ecdc4,
+                0 5px 15px rgba(0,0,0,0.5);
+            animation: retroPulse 1s infinite;
+        }
+
+        @keyframes retroPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 
+                    0 0 0 4px #333,
+                    0 0 20px #4ecdc4,
+                    0 0 30px #4ecdc4,
+                    0 5px 15px rgba(0,0,0,0.5);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 
+                    0 0 0 4px #333,
+                    0 0 30px #4ecdc4,
+                    0 0 40px #4ecdc4,
+                    0 5px 15px rgba(0,0,0,0.5);
+            }
         }
 
         .player-avatar.spectator {
@@ -354,18 +524,37 @@
         .big-card {
             width: 300px;
             height: 420px;
-            background: white;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
             border: 8px solid #333;
-            border-radius: 20px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             font-size: 8em;
             font-weight: bold;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            animation: cardFlip 0.6s;
+            box-shadow: 
+                0 0 0 4px #ffd700,
+                0 20px 60px rgba(0,0,0,0.8),
+                inset 0 0 100px rgba(255,255,255,0.1);
+            animation: cardFlip 0.6s, cardGlow 2s infinite;
             position: relative;
+        }
+
+        @keyframes cardGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 0 4px #ffd700,
+                    0 20px 60px rgba(0,0,0,0.8),
+                    inset 0 0 100px rgba(255,255,255,0.1);
+            }
+            50% {
+                box-shadow: 
+                    0 0 0 4px #ffd700,
+                    0 0 40px #ffd700,
+                    0 20px 60px rgba(0,0,0,0.8),
+                    inset 0 0 100px rgba(255,255,255,0.1);
+            }
         }
 
         @keyframes cardFlip {
@@ -436,34 +625,62 @@
         }
 
         button {
-            background: #2a5298;
+            background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
             color: white;
-            border: none;
+            border: 4px solid #333;
             padding: 15px 30px;
             font-size: 1.1em;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.1s;
             margin: 5px;
+            box-shadow: 
+                0 4px 0 #c44569,
+                0 6px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
         }
 
         button:hover {
-            background: #1e3c72;
             transform: translateY(-2px);
+            box-shadow: 
+                0 6px 0 #c44569,
+                0 8px 15px rgba(0,0,0,0.4);
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 0 #c44569,
+                0 3px 5px rgba(0,0,0,0.3);
         }
 
         button:disabled {
-            background: #ccc;
+            background: linear-gradient(145deg, #999, #888);
             cursor: not-allowed;
             transform: none;
+            box-shadow: 
+                0 4px 0 #666,
+                0 6px 10px rgba(0,0,0,0.3);
         }
 
         button.primary {
-            background: #4caf50;
+            background: linear-gradient(145deg, #4ecdc4, #44a3a0);
+            box-shadow: 
+                0 4px 0 #36857f,
+                0 6px 10px rgba(0,0,0,0.3);
         }
 
         button.primary:hover {
-            background: #388e3c;
+            box-shadow: 
+                0 6px 0 #36857f,
+                0 8px 15px rgba(0,0,0,0.4);
+        }
+
+        button.primary:active {
+            box-shadow: 
+                0 2px 0 #36857f,
+                0 3px 5px rgba(0,0,0,0.3);
         }
 
         .bet-slider-container {
@@ -649,13 +866,17 @@
             right: 20px;
             width: 320px;
             height: 400px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: linear-gradient(145deg, #f5f5f5, #ffffff);
+            border-radius: 8px;
+            box-shadow: 
+                0 0 0 4px #333,
+                0 0 0 8px #ff6b6b,
+                0 10px 30px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             z-index: 100;
             transition: all 0.3s;
+            border: 4px solid #333;
         }
 
         .chat-container.minimized {
@@ -663,14 +884,16 @@
         }
 
         .chat-header {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
             color: white;
             padding: 15px;
-            border-radius: 15px 15px 0 0;
+            border-radius: 4px 4px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            border-bottom: 4px solid #333;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
         .chat-header h3 {
@@ -679,14 +902,26 @@
         }
 
         .chat-toggle {
-            background: none;
-            border: none;
+            background: linear-gradient(145deg, #4ecdc4, #44a3a0);
+            border: 3px solid #333;
             color: white;
             font-size: 1.5em;
             cursor: pointer;
-            padding: 0;
+            padding: 0 10px;
             margin: 0;
             width: auto;
+            border-radius: 4px;
+            box-shadow: 
+                0 3px 0 #36857f,
+                0 4px 5px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        .chat-toggle:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 1px 0 #36857f,
+                0 2px 3px rgba(0,0,0,0.3);
         }
 
         .chat-messages {
@@ -793,24 +1028,41 @@
         }
 
         .chat-send-btn {
-            background: #2a5298;
+            background: linear-gradient(145deg, #4ecdc4, #44a3a0);
             color: white;
-            border: none;
+            border: 3px solid #333;
             padding: 10px 20px;
-            border-radius: 20px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 1.1em;
-            transition: all 0.3s;
+            transition: all 0.1s;
             margin: 0;
+            box-shadow: 
+                0 3px 0 #36857f,
+                0 4px 5px rgba(0,0,0,0.3);
+            font-weight: bold;
         }
 
         .chat-send-btn:hover {
-            background: #1e3c72;
+            transform: translateY(-1px);
+            box-shadow: 
+                0 4px 0 #36857f,
+                0 5px 8px rgba(0,0,0,0.4);
+        }
+
+        .chat-send-btn:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 1px 0 #36857f,
+                0 2px 3px rgba(0,0,0,0.3);
         }
 
         .chat-send-btn:disabled {
-            background: #ccc;
+            background: linear-gradient(145deg, #999, #888);
             cursor: not-allowed;
+            box-shadow: 
+                0 3px 0 #666,
+                0 4px 5px rgba(0,0,0,0.3);
         }
 
         /* Quick Reactions */
@@ -856,7 +1108,7 @@
                 <div class="logo-card black">K♠</div>
                 <div class="logo-card red">Q♦</div>
             </div>
-            Anakapalli Lona Bhayata
+            Mukka Yethu Be
         </h1>
 
         <!-- Mode Selection -->
@@ -1145,6 +1397,22 @@
 
         let gameStateListener = null;
         let turnAdvanceTimeout = null;
+
+        // Helper function to remove undefined values for Firebase
+        function cleanForFirebase(obj) {
+            if (Array.isArray(obj)) {
+                return obj.map(item => cleanForFirebase(item));
+            } else if (obj !== null && typeof obj === 'object') {
+                const cleaned = {};
+                for (let key in obj) {
+                    if (obj[key] !== undefined) {
+                        cleaned[key] = cleanForFirebase(obj[key]);
+                    }
+                }
+                return cleaned;
+            }
+            return obj;
+        }
 
         // Expose functions globally
         window.showLocalSetup = showLocalSetup;
@@ -1476,32 +1744,45 @@
 
             const activePlayers = Object.values(playersData).filter(p => !p.isSpectator);
             
-            gameState.players = activePlayers.map(p => ({
-                id: p.id,
-                name: p.name,
-                avatar: p.avatar,
-                avatarType: p.avatarType,
-                avatarData: p.avatarData,
-                wins: 0,
-                losses: 0,
-                netWinnings: 0,
-                isSpectator: false
-            }));
+            gameState.players = activePlayers.map(p => {
+                const player = {
+                    id: p.id,
+                    name: p.name,
+                    avatar: p.avatar || '👤',
+                    avatarType: p.avatarType || 'emoji',
+                    wins: 0,
+                    losses: 0,
+                    netWinnings: 0,
+                    isSpectator: false
+                };
+                
+                // Only add avatarData if it exists
+                if (p.avatarData) {
+                    player.avatarData = p.avatarData;
+                }
+                
+                return player;
+            });
 
             // Add spectators
             const spectators = Object.values(playersData).filter(p => p.isSpectator);
             spectators.forEach(s => {
-                gameState.players.push({
+                const spectator = {
                     id: s.id,
                     name: s.name,
-                    avatar: s.avatar,
-                    avatarType: s.avatarType,
-                    avatarData: s.avatarData,
+                    avatar: s.avatar || '👤',
+                    avatarType: s.avatarType || 'emoji',
                     wins: 0,
                     losses: 0,
                     netWinnings: 0,
                     isSpectator: true
-                });
+                };
+                
+                if (s.avatarData) {
+                    spectator.avatarData = s.avatarData;
+                }
+                
+                gameState.players.push(spectator);
             });
 
             gameState.ante = activePlayers[0].ante;
@@ -1512,18 +1793,21 @@
 
             dealInitialCards();
 
+            // Clean data before sending to Firebase
+            const cleanGameState = cleanForFirebase({
+                players: gameState.players,
+                housePot: gameState.housePot,
+                currentPlayerIndex: 0,
+                deck: gameState.deck,
+                playerHands: gameState.playerHands,
+                roundNumber: 1,
+                ante: gameState.ante
+            });
+
             // Save to Firebase
             await update(roomRef, {
                 status: 'playing',
-                gameState: {
-                    players: gameState.players,
-                    housePot: gameState.housePot,
-                    currentPlayerIndex: 0,
-                    deck: gameState.deck,
-                    playerHands: gameState.playerHands,
-                    roundNumber: 1,
-                    ante: gameState.ante
-                }
+                gameState: cleanGameState
             });
         }
 
@@ -1768,7 +2052,7 @@
             // Update Firebase if online
             if (gameState.mode === 'online' && gameState.roomCode) {
                 const gameStateRef = ref(database, `rooms/${gameState.roomCode}/gameState`);
-                await update(gameStateRef, {
+                const updateData = cleanForFirebase({
                     players: gameState.players,
                     housePot: gameState.housePot,
                     drawnCard: gameState.drawnCard,
@@ -1783,6 +2067,7 @@
                         bet: gameState.currentBet
                     }
                 });
+                await update(gameStateRef, updateData);
             }
 
             // Show result panel
@@ -1925,16 +2210,15 @@
             // Update Firebase if online
             if (gameState.mode === 'online' && gameState.roomCode) {
                 const gameStateRef = ref(database, `rooms/${gameState.roomCode}/gameState`);
-                await update(gameStateRef, {
+                const updateData = cleanForFirebase({
                     currentPlayerIndex: gameState.currentPlayerIndex,
                     deck: gameState.deck,
                     playerHands: gameState.playerHands,
                     players: gameState.players,
                     housePot: gameState.housePot,
-                    roundNumber: gameState.roundNumber,
-                    drawnCard: null,
-                    lastResult: null
+                    roundNumber: gameState.roundNumber
                 });
+                await update(gameStateRef, updateData);
             }
 
             updateGameDisplay();
