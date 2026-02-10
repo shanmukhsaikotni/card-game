@@ -641,6 +641,211 @@
             letter-spacing: 5px;
             margin: 15px 0;
         }
+
+        /* Chat Box */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .chat-container.minimized {
+            height: 60px;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .chat-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            width: auto;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            animation: messageSlide 0.3s;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.own {
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e3f2fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+            border: 2px solid #2a5298;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .chat-bubble {
+            background: #e3f2fd;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .chat-message.own .chat-bubble {
+            background: #2a5298;
+            color: white;
+        }
+
+        .chat-sender {
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 3px;
+        }
+
+        .chat-message.own .chat-sender {
+            color: rgba(255,255,255,0.8);
+            text-align: right;
+        }
+
+        .chat-text {
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid #ddd;
+            background: #f5f5f5;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.95em;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #2a5298;
+        }
+
+        .chat-send-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            margin: 0;
+        }
+
+        .chat-send-btn:hover {
+            background: #1e3c72;
+        }
+
+        .chat-send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Quick Reactions */
+        .quick-reactions {
+            display: flex;
+            gap: 5px;
+            padding: 0 12px 8px;
+            overflow-x: auto;
+        }
+
+        .reaction-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0;
+            min-width: auto;
+        }
+
+        .reaction-btn:hover {
+            transform: scale(1.2);
+            background: #e3f2fd;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: calc(100% - 40px);
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -857,6 +1062,26 @@
             </div>
         </div>
 
+        <!-- Chat Box -->
+        <div class="chat-container" id="chatContainer" style="display: none;">
+            <div class="chat-header" onclick="toggleChat()">
+                <h3>💬 Chat</h3>
+                <button class="chat-toggle" id="chatToggle">−</button>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="quick-reactions">
+                <button class="reaction-btn" onclick="sendReaction('👍')">👍</button>
+                <button class="reaction-btn" onclick="sendReaction('😂')">😂</button>
+                <button class="reaction-btn" onclick="sendReaction('🔥')">🔥</button>
+                <button class="reaction-btn" onclick="sendReaction('😎')">😎</button>
+                <button class="reaction-btn" onclick="sendReaction('💯')">💯</button>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." maxlength="200" onkeypress="handleChatKeyPress(event)">
+                <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+            </div>
+        </div>
+
         <!-- Card Reveal Overlay -->
         <div class="card-reveal-overlay" id="cardRevealOverlay">
             <div class="big-card" id="bigCard">
@@ -945,6 +1170,10 @@
         window.confirmBet = confirmBet;
         window.makeGuess = makeGuess;
         window.resetGame = resetGame;
+        window.toggleChat = toggleChat;
+        window.sendChatMessage = sendChatMessage;
+        window.sendReaction = sendReaction;
+        window.handleChatKeyPress = handleChatKeyPress;
 
         // Navigation Functions
         function showLocalSetup() {
@@ -1374,6 +1603,10 @@
                 document.getElementById('spectatorBanner').classList.remove('hidden');
             }
 
+            // Show chat
+            document.getElementById('chatContainer').style.display = 'flex';
+            setupChatListener();
+
             updateGameDisplay();
             showCurrentTurnControls();
         }
@@ -1706,6 +1939,139 @@
 
             updateGameDisplay();
             showCurrentTurnControls();
+        }
+
+        // Chat Functions
+        function toggleChat() {
+            const container = document.getElementById('chatContainer');
+            const toggle = document.getElementById('chatToggle');
+            
+            if (container.classList.contains('minimized')) {
+                container.classList.remove('minimized');
+                toggle.textContent = '−';
+            } else {
+                container.classList.add('minimized');
+                toggle.textContent = '+';
+            }
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const chatData = {
+                id: Date.now(),
+                senderId: gameState.myPlayerId,
+                senderName: gameState.players.find(p => p.id === gameState.myPlayerId)?.name || 'Unknown',
+                senderAvatar: gameState.myAvatar,
+                senderAvatarType: gameState.myAvatarType,
+                senderAvatarData: gameState.myAvatarData,
+                message: message,
+                timestamp: Date.now(),
+                type: 'message'
+            };
+
+            // Add to local chat
+            displayChatMessage(chatData);
+
+            // Send to Firebase if online
+            if (gameState.mode === 'online' && gameState.roomCode) {
+                const chatRef = ref(database, `rooms/${gameState.roomCode}/chat/${chatData.id}`);
+                await set(chatRef, chatData);
+            }
+
+            input.value = '';
+        }
+
+        async function sendReaction(emoji) {
+            const chatData = {
+                id: Date.now(),
+                senderId: gameState.myPlayerId,
+                senderName: gameState.players.find(p => p.id === gameState.myPlayerId)?.name || 'Unknown',
+                senderAvatar: gameState.myAvatar,
+                senderAvatarType: gameState.myAvatarType,
+                senderAvatarData: gameState.myAvatarData,
+                message: emoji,
+                timestamp: Date.now(),
+                type: 'reaction'
+            };
+
+            displayChatMessage(chatData);
+
+            if (gameState.mode === 'online' && gameState.roomCode) {
+                const chatRef = ref(database, `rooms/${gameState.roomCode}/chat/${chatData.id}`);
+                await set(chatRef, chatData);
+            }
+        }
+
+        function displayChatMessage(chatData) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            const isOwn = chatData.senderId === gameState.myPlayerId;
+            messageDiv.className = `chat-message ${isOwn ? 'own' : ''}`;
+
+            let avatarContent;
+            if (chatData.senderAvatarType === 'image' && chatData.senderAvatarData) {
+                avatarContent = `<img src="${chatData.senderAvatarData}" alt="${chatData.senderName}">`;
+            } else {
+                avatarContent = chatData.senderAvatar;
+            }
+
+            if (chatData.type === 'reaction') {
+                messageDiv.innerHTML = `
+                    <div class="chat-avatar">${avatarContent}</div>
+                    <div class="chat-bubble">
+                        <div class="chat-sender">${chatData.senderName}</div>
+                        <div class="chat-text" style="font-size: 2em; text-align: center;">${chatData.message}</div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="chat-avatar">${avatarContent}</div>
+                    <div class="chat-bubble">
+                        <div class="chat-sender">${chatData.senderName}</div>
+                        <div class="chat-text">${escapeHtml(chatData.message)}</div>
+                    </div>
+                `;
+            }
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function setupChatListener() {
+            if (gameState.mode === 'online' && gameState.roomCode) {
+                const chatRef = ref(database, `rooms/${gameState.roomCode}/chat`);
+                onValue(chatRef, (snapshot) => {
+                    const messages = snapshot.val();
+                    if (messages) {
+                        const messagesContainer = document.getElementById('chatMessages');
+                        messagesContainer.innerHTML = ''; // Clear existing
+                        
+                        // Sort by timestamp
+                        const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp - b.timestamp);
+                        
+                        sortedMessages.forEach(msg => {
+                            displayChatMessage(msg);
+                        });
+                    }
+                });
+            }
         }
 
         async function resetGame() {
